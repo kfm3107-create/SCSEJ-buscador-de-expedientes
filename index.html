@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SCSEJ - Consulta de Expedientes</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+
+    <!-- VISTA 1: AVISO LEGAL -->
+    <div id="view-disclaimer" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <i class="fas fa-exclamation-triangle"></i>
+                <h2>AVISO LEGAL E INSTITUCIONAL (PROTOTIPO ACADÉMICO)</h2>
+            </div>
+            <div class="modal-body">
+                <p>La presente plataforma constituye un prototipo académico exclusivamente para fines de investigación y
+                    demostración tecnológica en el entorno del derecho procesal peruano. No es la web oficial del Poder
+                    Judicial ni de ninguna entidad del Estado.</p>
+                <p>Todos los datos, nombres y expedientes mostrados son simulados o anonimizados, y se emplean
+                    únicamente con fines de sustentación académica.</p>
+                <p>El acceso a esta plataforma no genera efectos jurídicos vinculantes ni constituye consulta oficial de
+                    proceso judicial alguno.</p>
+            </div>
+            <div class="modal-footer" style="justify-content: space-between; align-items: center;">
+                <span style="color: #d1d5db; font-size: 0.8rem; font-weight: bold;">AUTOR: KHATHERINE FERNANDA MAMANI
+                    MIRANDA</span>
+                <button onclick="ingresarSistema()" class="btn-ingresar">
+                    <i class="fas fa-lock"></i> Ingresar al Sistema
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CONTENEDOR PRINCIPAL -->
+    <div id="main-app" class="hidden">
+
+        <!-- HEADER -->
+        <header class="header-main">
+            <div class="header-top">
+                <div class="logo-container">
+                    <!-- CAMBIADO: Ahora usa LOGO.jpg -->
+                    <img src="img/LOGO.jpg" alt="SICE" class="logo-sice" onerror="this.style.display='none'">
+                    <div class="logo-text">
+                        <span class="logo-title">SICE</span>
+                        <span class="logo-sub">SISTEMA INTEGRADO DE CONSULTA DE EXPEDIENTES</span>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <span class="id-gobpe"><i class="fas fa-lock"></i> ID GOB.PE</span>
+                    <!-- CAMBIADO: Reemplazado el bloque de texto por carpeta.png -->
+                    <img src="img/carpeta.png" alt="Consulta de Expedientes" class="logo-carpeta"
+                        onerror="this.style.display='none'">
+                </div>
+            </div>
+
+            <div class="header-nav">
+                <div class="nav-links">
+                    <a href="#" class="nav-link" onclick="volverAlBuscador()">INICIO</a>
+                    <a href="#" class="nav-link">VIDEOTUTORIALES</a>
+                    <a href="#" class="nav-link" onclick="mostrarFAQ()">PREGUNTAS FRECUENTES</a>
+                </div>
+                <div class="nav-right">
+                    <div class="lang-switch">
+                        <span class="active">ES</span>
+                        <span>EN</span>
+                        <span>QU</span>
+                        <span>AY</span>
+                    </div>
+                    <div class="session-info">
+                        Fecha: <span id="current-date"></span> Hora: <span id="current-time"></span><br>
+                        Tiempo restante de sesión: <span id="countdown-timer">10:00</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- VISTA 2: BUSCADOR -->
+        <main id="view-search" class="container main-content">
+            <h1 class="title-search">BÚSQUEDA DE EXPEDIENTES</h1>
+
+            <div class="search-card">
+                <div class="tabs">
+                    <button class="tab">Por filtros</button>
+                    <button class="tab active">Por Código de Expediente</button>
+                </div>
+
+                <div class="search-body">
+                    <h3 class="subtitle">Código del expediente:</h3>
+
+                    <div class="code-form">
+                        <div class="code-group">
+                            <div class="code-item">
+                                <label>Secuencia <br><span>(*) 5 dígitos</span></label>
+                                <input type="text" id="secuencia" value="00598" maxlength="5">
+                            </div>
+                            <span class="separator">-</span>
+                            <div class="code-item">
+                                <label>Año <br><span>4 dígitos</span></label>
+                                <input type="text" id="anio" value="2026" maxlength="4">
+                            </div>
+                            <span class="separator">-</span>
+                            <div class="code-item">
+                                <label>Órgano <br><span>1 dígito</span></label>
+                                <input type="text" id="organo" value="0" maxlength="1">
+                            </div>
+                            <span class="separator">-</span>
+                            <div class="code-item">
+                                <label>Distrito Judicial <br><span>4 dígitos</span></label>
+                                <input type="text" id="distrito" value="2101" maxlength="4">
+                            </div>
+                            <span class="separator">-</span>
+                            <div class="code-item">
+                                <label>Instancia <br><span>2 letras</span></label>
+                                <input type="text" id="instancia" value="JR" maxlength="2">
+                            </div>
+                            <span class="separator">-</span>
+                            <div class="code-item">
+                                <label>Especialidad <br><span>2 letras</span></label>
+                                <input type="text" id="especialidad" value="CI" maxlength="2">
+                            </div>
+                            <span class="separator">-</span>
+                            <div class="code-item">
+                                <label>Correlativo <br><span>2 dígitos</span></label>
+                                <input type="text" id="correlativo" value="03" maxlength="2">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ejemplos">
+                        <p>EJEMPLOS DE FORMATO</p>
+                        <div class="ejemplo-box">Expediente N°: 00203-2025-0-2101-JP-FC-01</div>
+                        <div class="ejemplo-box">Expediente N°: 00001-2005-0-1817-JR-CO-06</div>
+                    </div>
+
+                    <div class="parte-group">
+                        <label>Parte <span class="text-red">(*)</span></label>
+                        <input type="text" value="KHATHERINE" class="input-parte">
+                    </div>
+                    <p class="helper-text">Ingresar ambos apellidos (paterno y materno) o la razón social de alguna de
+                        las partes involucradas en el proceso, respetando el orden y la forma exacta en que aparecen en
+                        cualquiera de las resoluciones del expediente.</p>
+
+                    <p class="obligatorio">(*) Datos obligatorios</p>
+
+                    <div class="captcha-section">
+                        <p class="captcha-title">Escriba el código mostrado</p>
+                        <div class="captcha-row">
+                            <div class="captcha-box">
+                                <span class="captcha-text">q j £ d L</span>
+                            </div>
+                            <button class="btn-captcha-icon"><i class="fas fa-sync-alt"></i></button>
+                            <button class="btn-captcha-icon"><i class="fas fa-volume-up"></i></button>
+                            <input type="text" class="captcha-input">
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-4">
+                        <button onclick="realizarBusqueda()" class="btn-consultar">CONSULTAR</button>
+                    </div>
+
+                    <p class="captcha-note">* La búsqueda se deberá realizar ingresando el número, año y especialidad
+                        del expediente tal como se registró inicialmente en el sistema.</p>
+                </div>
+            </div>
+        </main>
+
+        <!-- VISTA 2.5: PREGUNTAS FRECUENTES (FAQ) -->
+        <main id="view-faq" class="container main-content hidden">
+            <h1 class="title-search">PREGUNTAS FRECUENTES</h1>
+            <div class="faq-container">
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFAQ(this)">
+                        ¿SE DEBE HACER ALGÚN TIPO DE PAGO PARA REALIZAR LAS BÚSQUEDAS?
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        No, el sistema de consulta de expedientes judiciales es totalmente gratuito para los ciudadanos.
+                        No se requiere ningún tipo de pago, tarjeta de crédito o suscripción para realizar búsquedas en
+                        la plataforma.
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFAQ(this)">
+                        ¿QUÉ ME OFRECE EL SISTEMA?
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        El sistema le ofrece acceso en línea a la información pública de los expedientes judiciales,
+                        permitiéndole conocer el estado actual del proceso, las partes involucradas, las resoluciones
+                        emitidas, las notificaciones realizadas y el historial de actuados, todo desde la comodidad de
+                        su hogar u oficina.
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFAQ(this)">
+                        ¿CÓMO BUSCAR MI EXPEDIENTE?
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        Para buscar su expediente, diríjase a la pestaña "BÚSQUEDA DE EXPEDIENTES". Puede hacerlo de dos
+                        formas: <br><br>
+                        <strong>1. Por Código de Expediente:</strong> Ingrese los datos exactos (Secuencia, Año, Órgano,
+                        Distrito Judicial, Instancia, Especialidad y Correlativo) tal como aparecen en su resolución.
+                        <br>
+                        <strong>2. Por Filtros:</strong> Seleccione el Distrito Judicial, la Instancia, la Especialidad
+                        y el Año, y opcionalmente ingrese el nombre de una de las partes (demandante o demandado).
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFAQ(this)">
+                        ¿QUÉ SON LOS DISTRITOS JUDICIALES?
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        Los Distritos Judiciales son las divisiones territoriales del Poder Judicial en el Perú. Cada
+                        distrito judicial tiene a su cargo la administración de justicia en una determinada jurisdicción
+                        geográfica (por ejemplo, Puno, Lima, Arequipa, etc.) y cuenta con sus propias sedes y juzgados.
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFAQ(this)">
+                        ¿QUÉ SON LAS INSTANCIAS?
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        Las instancias se refieren al nivel jerárquico del órgano jurisdiccional dentro del sistema
+                        judicial. Por lo general, existen dos instancias principales: <br><br>
+                        <strong>Primera Instancia:</strong> Es donde se inicia el proceso y se actúan las pruebas
+                        (Juzgados de Paz, Juzgados Especializados o Mixtos). <br>
+                        <strong>Segunda Instancia:</strong> Es la instancia de revisión, donde se resuelven las
+                        apelaciones (Salas Superiores). <br>
+                        También puede existir la Corte Suprema como instancia extraordinaria (Casación).
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFAQ(this)">
+                        ¿QUÉ SON LAS ESPECIALIDADES?
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        Las especialidades son las ramas del derecho que atiende cada juzgado o sala. Las más comunes
+                        son: <br><br>
+                        <strong>Civil:</strong> Conflictos entre privados (contratos, deudas, propiedad). <br>
+                        <strong>Penal:</strong> Delitos y faltas. <br>
+                        <strong>Laboral:</strong> Conflictos entre empleadores y trabajadores. <br>
+                        <strong>Familia:</strong> Temas de pensión de alimentos, tenencia, divorcios. <br>
+                        <strong>Contencioso Administrativo:</strong> Demandas contra el Estado.
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- VISTA 3: RESULTADO DE LA BÚSQUEDA -->
+        <main id="view-results" class="container main-content hidden">
+            <div class="back-button-container">
+                <button onclick="volverAlBuscador()" class="btn-back"><i class="fas fa-arrow-left"></i></button>
+            </div>
+            <h1 class="title-search">RESULTADO DE LA BÚSQUEDA</h1>
+
+            <div class="results-wrapper">
+                <div class="results-header">
+                    <div>
+                        <div class="font-bold text-white">Expedientes encontrados: 1</div>
+                        <div class="text-sm text-gray-200">Coincidencia con datos de la parte: 1</div>
+                    </div>
+                    <div class="search-partes">
+                        <input type="text" placeholder="Parte Procesal">
+                        <button><i class="fas fa-search"></i></button>
+                    </div>
+                </div>
+
+                <div class="result-item" onclick="verReporte()">
+                    <div class="result-icon"><i class="fas fa-exclamation"></i></div>
+                    <div class="result-info">
+                        <div class="result-code">00598-2026-0-2101-JR-CI-03</div>
+                        <div class="result-court">3° JUZGADO CIVIL- SEDE CENTRAL PUNO</div>
+                        <div class="result-parties">DEMANDADO: KHATHERINE ******. DEMANDANTE: CAJA AREQUIPA ******.
+                        </div>
+                    </div>
+                    <div class="result-action">
+                        <i class="fas fa-search-plus"></i>
+                    </div>
+                </div>
+
+                <div class="text-center mt-4 text-sm font-semibold text-gray-600">Se ha encontrado : 1 registro.</div>
+            </div>
+        </main>
+
+        <!-- VISTA 4: REPORTE Y SEGUIMIENTO -->
+        <main id="view-report" class="container main-content hidden">
+            <h1 class="title-search">REPORTE DE EXPEDIENTE</h1>
+
+            <!-- DATOS DEL EXPEDIENTE -->
+            <div class="card mb-6">
+                <div class="card-header"><i class="fas fa-folder-open"></i> REPORTE DE EXPEDIENTE</div>
+                <div class="report-grid">
+                    <div class="report-row"><span class="label">Expediente N°:</span><span
+                            class="value font-bold">00598-2026-0-2101-JR-CI-03</span></div>
+                    <div class="report-row"><span class="label">Distrito Judicial:</span><span class="value">PUNO</span>
+                    </div>
+                    <div class="report-row"><span class="label">Órgano Jurisdiccional:</span><span class="value">3°
+                            JUZGADO CIVIL – SEDE CENTRAL PUNO</span></div>
+                    <div class="report-row"><span class="label">Especialista Legal:</span><span class="value">JAIME
+                            ******</span></div>
+                    <div class="report-row"><span class="label">Juez:</span><span class="value">GUIDO ******</span>
+                    </div>
+                    <div class="report-row"><span class="label">Proceso:</span><span class="value">PROCESO DE
+                            EJECUSIÓN</span></div>
+                    <div class="report-row"><span class="label">Fecha de Inicio:</span><span
+                            class="value">08/07/2026</span></div>
+                    <div class="report-row"><span class="label">Especialidad:</span><span class="value">CIVIL</span>
+                    </div>
+                    <div class="report-row"><span class="label">Observación:</span><span class="value">EXPEDIENTE CON
+                            ESTADO PROCESAL FINAL</span></div>
+                    <div class="report-row"><span class="label">Estado:</span><span
+                            class="value text-red font-bold">EJECUCIÓN / COSA JUZGADA</span></div>
+                    <div class="report-row"><span class="label">Materia(s):</span><span class="value">OBLIGACION DE DAR
+                            SUMA DE DINERO</span></div>
+                    <div class="report-row"><span class="label">Fecha Conclusión:</span><span
+                            class="value">12/08/2026</span></div>
+                    <div class="report-row"><span class="label">Etapa Procesal:</span><span
+                            class="value">EJECUCIÓN</span></div>
+                    <div class="report-row"><span class="label">Motivo Conclusión:</span><span class="value">SENTENCIA
+                            CONSENTIDA</span></div>
+                    <div class="report-row"><span class="label">Ubicación:</span><span class="value">JUZGADO</span>
+                    </div>
+                    <div class="report-row"><span class="label">Sumilla:</span><span class="value">DEMANDA DE OBLIGACION
+                            DE DAR SUMA DE DINERO</span></div>
+                </div>
+            </div>
+
+            <!-- ESTADO, PROGRESO Y LÍNEA DE TIEMPO (MCCLO) -->
+            <div class="card mb-6">
+                <div class="card-header"><i class="fas fa-chart-line"></i> ESTADO, PROGRESO Y LÍNEA DE TIEMPO (MCCLO)
+                </div>
+                <div class="p-6">
+                    <div class="progress-section">
+                        <div class="progress-label">Avance Global del Proceso <span>100%</span></div>
+                        <div class="progress-bar-bg">
+                            <div class="progress-bar-fill" style="width: 100%"></div>
+                        </div>
+                        <p class="progress-note">El proceso cuenta con autoridad de Cosa Juzgada y se encuentra en etapa
+                            de ejecución.</p>
+                    </div>
+
+                    <div class="etapas-section mt-4">
+                        <h4>Etapa Procesal (Modelo Oral)</h4>
+                        <ul class="etapas-list">
+                            <li><strong>Calificación de Demanda</strong><br><span>Revisión de requisitos de
+                                    admisibilidad y procedencia.</span></li>
+                            <li><strong>Trámite y Audiencia (Única)</strong><br><span>Saneamiento, conciliación,
+                                    fijación de puntos y actuación de pruebas.</span></li>
+                            <li><strong>Sentencia</strong><br><span>Emisión del fallo que resuelve el fondo del
+                                    conflicto.</span></li>
+                            <li><strong>Impugnaciones (Nulidad)</strong><br><span>Rechazo de recursos impugnatorios
+                                    dilatorios.</span></li>
+                            <li class="active-etapa"><strong>Ejecución <span class="badge-etapa">ETAPA
+                                        ACTUAL</span></strong><br><span>Cumplimiento forzado de las disposiciones de la
+                                    sentencia firme.</span></li>
+                        </ul>
+                    </div>
+
+                    <div class="hitos-section mt-4">
+                        <h4>Hitos del Expediente</h4>
+                        <div class="hito-item"><i class="fas fa-check-circle"></i>
+                            <div><strong>Presentación de Demanda</strong><br>08/07/2026</div>
+                        </div>
+                        <div class="hito-item"><i class="fas fa-check-circle"></i>
+                            <div><strong>Auto que Declara Inadmisible la Demanda (Res. 01)</strong><br>15/07/2025</div>
+                        </div>
+                        <div class="hito-item"><i class="fas fa-check-circle"></i>
+                            <div><strong>Escrito N° 2</strong><br>20/07/2026</div>
+                        </div>
+                        <div class="hito-item"><i class="fas fa-check-circle"></i>
+                            <div><strong>Mandato Ejecutivo (Res. 02)</strong><br>26/07/2026</div>
+                        </div>
+                        <div class="hito-item"><i class="fas fa-check-circle"></i>
+                            <div><strong>Ejecución Forzada (Res. 03)</strong><br>12/08/2026</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PARTES PROCESALES (Nueva Tabla) -->
+            <div class="card mb-6">
+                <div class="card-header"><i class="fas fa-users"></i> PARTES PROCESALES</div>
+                <div class="table-responsive">
+                    <table class="partes-table">
+                        <thead>
+                            <tr>
+                                <th>Parte</th>
+                                <th>Tipo de Persona</th>
+                                <th>Apellido Paterno / Razón Social</th>
+                                <th>Apellido Materno</th>
+                                <th>Nombres</th>
+                                <th>Consultas de Interoperabilidad</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>DEMANDADO</td>
+                                <td>NATURAL</td>
+                                <td>******</td>
+                                <td>******</td>
+                                <td><strong>KHATHERINE ******</strong></td>
+                                <td>
+                                    <div class="interop-buttons">
+                                        <button onclick="abrirReniec('demandado')" class="btn-interop btn-reniec"><i
+                                                class="fas fa-id-card"></i> RENIEC</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>DEMANDANTE</td>
+                                <td>JURIDICA</td>
+                                <td>******</td>
+                                <td>******</td>
+                                <td><strong> CAJA MUNICIPAL DE AHORRO Y CREDITO DE - AREQUIPA S.A. - CAJA AREQUIPA
+                                    </strong></td>
+                                <td>
+                                    <div class="interop-buttons">
+                                        <button onclick="abrirReniec('demandante')" class="btn-interop btn-reniec"><i
+                                                class="fas fa-id-card"></i> RENIEC</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- SEGUIMIENTO DEL EXPEDIENTE -->
+            <div class="card mb-6">
+                <div class="card-header"><i class="fas fa-list-alt"></i> SEGUIMIENTO DEL EXPEDIENTE</div>
+                <div class="seguimiento-container">
+
+                    <!-- N° 0 -->
+                    <div class="seguimiento-item">
+                        <div class="seguimiento-badge">N° 0</div>
+                        <div class="seguimiento-header">
+                            <div class="seg-col"><i class="fas fa-calendar-alt"></i> Fecha/Resolución:
+                                <strong>08/07/2026</strong>
+                            </div>
+                            <div class="seg-col"><i class="fas fa-gavel"></i> Acto: <strong>DEMANDA</strong></div>
+                        </div>
+                        <div class="seguimiento-sumilla">
+                            <div class="sumilla-title"><i class="fas fa-align-left"></i> Sumilla:</div>
+                            <p>INTERPONGO DEMANDA DE OBLIGACION DE DAR SUMA DE DINERO</p>
+                        </div>
+                        <div class="seguimiento-footer">
+                            <div class="usuario-responsable">Usuario Responsable: <span class="text-blue">GUIDO
+                                    ******</span></div>
+                            <button onclick="abrirPDF('0. DEMANDA Y ANEXOS.pdf')" class="btn-pdf-rojo">
+                                <i class="fas fa-file-pdf"></i> VER DEMANDA
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- N° 1 -->
+                    <div class="seguimiento-item">
+                        <div class="seguimiento-badge">N° 1</div>
+                        <div class="seguimiento-header">
+                            <div class="seg-col"><i class="fas fa-calendar-alt"></i> Fecha/Resolución:
+                                <strong>15/07/2026</strong>
+                            </div>
+                            <div class="seg-col"><i class="fas fa-gavel"></i> Acto: <strong>RESOLUCIÓN N° 01 (AUTOQUE
+                                    DECLARA INADMISIBLE LA DEMANDA)</strong></div>
+                        </div>
+                        <div class="seguimiento-sumilla">
+                            <div class="sumilla-title"><i class="fas fa-align-left"></i> Sumilla:</div>
+                            <p>DECLARA INADMISIBLE LA DEMANDA DE OBLIGACION DE DAR SUMA DE DINERO</p>
+                        </div>
+
+                        <div class="notif-card">
+                            <div class="notif-header">NOTIFICACIÓN CÉDULA 27578-2026 - DEMANDANTE</div>
+                            <div class="notif-content">
+                                <div class="notif-info">
+                                    <div><span>Destinatario:</span> CAJA AREQUIPA ******</div>
+                                    <div><span>Fecha de envío:</span> 15/07/2026 09:50</div>
+                                </div>
+                                <div class="notif-info-right">
+                                    <div class="notif-forma"><span>Forma de entrega:</span> CASILLA ELECTRÓNICA</div>
+                                    <div class="notif-actions">
+                                        <button
+                                            onclick="abrirDetalles('NOTIFICACIÓN CÉDULA 27578-2026 - DEMANDANTE', 'CAJA AREQUIPA ******', 'RESOLUCION UNO', '15/07/2026', '15/07/2026', '3', '1', '15/07/2026')"
+                                            class="btn-notif-details">DETALLES <i class="fas fa-search"></i></button>
+                                        <button onclick="abrirPDF('1.2. CEDULA DE NOTIFICACION - CA - copia (1).pdf')"
+                                            class="btn-notif-pdf">VER CÉDULA <i class="fas fa-file-pdf"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="notif-card">
+                            <div class="notif-header">NOTIFICACIÓN CÉDULA 27576-2026 - DEMANDADO</div>
+                            <div class="notif-content">
+                                <div class="notif-info">
+                                    <div><span>Destinatario:</span> KHATHERINE ******</div>
+                                    <div><span>Fecha de envío:</span> 15/07/2026 09:50</div>
+                                </div>
+                                <div class="notif-info-right">
+                                    <div class="notif-forma"><span>Forma de entrega:</span> CASILLA ELECTRÓNICA</div>
+                                    <div class="notif-actions">
+                                        <button
+                                            onclick="abrirDetalles('NOTIFICACIÓN CÉDULA 27576-2026 - DEMANDADO', 'KHATHERINE ******', 'RESOLUCION UNO', '15/07/2026', '15/07/2026', '3', '1', '15/07/2026')"
+                                            class="btn-notif-details">DETALLES <i class="fas fa-search"></i></button>
+                                        <button
+                                            onclick="abrirPDF('1.3. CEDULA DE NOTIFICACION - CA - para la demandada .pdf')"
+                                            class="btn-notif-pdf">VER CÉDULA <i class="fas fa-file-pdf"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="seguimiento-footer">
+                            <div class="usuario-responsable">Usuario Responsable: <span class="text-blue">GUIDO
+                                    ******</span></div>
+                            <button onclick="abrirPDF('1. RESOLUCION 1.pdf')" class="btn-pdf-rojo">
+                                <i class="fas fa-file-pdf"></i> VER RES. N° 01
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- N° 2 -->
+                    <div class="seguimiento-item">
+                        <div class="seguimiento-badge">N° 2</div>
+                        <div class="seguimiento-header">
+                            <div class="seg-col"><i class="fas fa-calendar-alt"></i> Fecha/Resolución:
+                                <strong>20/07/2026</strong>
+                            </div>
+                            <div class="seg-col"><i class="fas fa-gavel"></i> Acto: <strong>ESCRITO 02</strong></div>
+                        </div>
+                        <div class="seguimiento-sumilla">
+                            <div class="sumilla-title"><i class="fas fa-align-left"></i> Sumilla:</div>
+                            <p>CUMPLO MANDATO</p>
+                        </div>
+                        <div class="seguimiento-footer">
+                            <div class="usuario-responsable">Usuario Responsable: <span class="text-blue">GUIDO
+                                    ******</span></div>
+                            <button onclick="abrirPDF('2. ESCRITO 02 Y ANEXOS.pdf')" class="btn-pdf-rojo">
+                                <i class="fas fa-file-pdf"></i> VER ESCRITO 02
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- N° 3 -->
+                    <div class="seguimiento-item">
+                        <div class="seguimiento-badge">N° 3</div>
+                        <div class="seguimiento-header">
+                            <div class="seg-col"><i class="fas fa-calendar-alt"></i> Fecha/Resolución:
+                                <strong>26/07/2026</strong>
+                            </div>
+                            <div class="seg-col"><i class="fas fa-gavel"></i> Acto: <strong>RESOLUCIÓN N° 02 (MANDATO
+                                    EJECUTIVO)</strong></div>
+                        </div>
+                        <div class="seguimiento-sumilla">
+                            <div class="sumilla-title"><i class="fas fa-align-left"></i> Sumilla:</div>
+                            <p>MANDATO EJECUTIVO</p>
+                        </div>
+
+                        <div class="notif-card">
+                            <div class="notif-header">NOTIFICACIÓN CÉDULA 29583-2026 - DEMANDANTE</div>
+                            <div class="notif-content">
+                                <div class="notif-info">
+                                    <div><span>Destinatario:</span> CAJA AREQUIPA ******</div>
+                                    <div><span>Fecha de envío:</span> 27/07/2026 09:50</div>
+                                </div>
+                                <div class="notif-info-right">
+                                    <div class="notif-forma"><span>Forma de entrega:</span> CASILLA ELECTRÓNICA</div>
+                                    <div class="notif-actions">
+                                        <button
+                                            onclick="abrirDetalles('NOTIFICACIÓN CÉDULA 29583-2026 - DEMANDANTE', 'CAJA AREQUIPA ******', 'RESOLUCION DOS', '26/07/2026', '27/07/2026', '1', '1', '27/07/2026')"
+                                            class="btn-notif-details">DETALLES <i class="fas fa-search"></i></button>
+                                        <button onclick="abrirPDF('3.2. CEDULA DE NOTIFICACION - CA - copia.pdf')"
+                                            class="btn-notif-pdf">VER CÉDULA <i class="fas fa-file-pdf"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="notif-card">
+                            <div class="notif-header">NOTIFICACIÓN CÉDULA 29585-2026 - DEMANDADO</div>
+                            <div class="notif-content">
+                                <div class="notif-info">
+                                    <div><span>Destinatario:</span> KHATHERINE ******</div>
+                                    <div><span>Fecha de envío:</span> 27/07/2026 09:50</div>
+                                </div>
+                                <div class="notif-info-right">
+                                    <div class="notif-forma"><span>Forma de entrega:</span> CASILLA ELECTRÓNICA</div>
+                                    <div class="notif-actions">
+                                        <button
+                                            onclick="abrirDetalles('NOTIFICACIÓN CÉDULA 29585-2026 - DEMANDADO', 'KHATHERINE ******', 'RESOLUCION DOS', '26/07/2026', '27/07/2026', '1', '1', '27/07/2026')"
+                                            class="btn-notif-details">DETALLES <i class="fas fa-search"></i></button>
+                                        <button onclick="abrirPDF('3.3. CEDULA DE NOTIFICACION - DEMANDADA.pdf')"
+                                            class="btn-notif-pdf">VER CÉDULA <i class="fas fa-file-pdf"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="seguimiento-footer">
+                            <div class="usuario-responsable">Usuario Responsable: <span class="text-blue">GUIDO
+                                    ******</span></div>
+                            <button onclick="abrirPDF('3. RESOLUCION 2.pdf')" class="btn-pdf-rojo">
+                                <i class="fas fa-file-pdf"></i> VER RES. N° 02
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- N° 4 -->
+                    <div class="seguimiento-item">
+                        <div class="seguimiento-badge">N° 4</div>
+                        <div class="seguimiento-header">
+                            <div class="seg-col"><i class="fas fa-calendar-alt"></i> Fecha/Resolución:
+                                <strong>26/07/2026</strong>
+                            </div>
+                            <div class="seg-col"><i class="fas fa-gavel"></i> Acto: <strong>RESOLUCIÓN N° 03 (EJECUCION
+                                    FORZADA)</strong></div>
+                        </div>
+                        <div class="seguimiento-sumilla">
+                            <div class="sumilla-title"><i class="fas fa-align-left"></i> Sumilla:</div>
+                            <p>EJECUCIÓN FORZADA</p>
+                        </div>
+
+                        <div class="notif-card">
+                            <div class="notif-header">NOTIFICACIÓN CÉDULA 32685-2026 - DEMANDANTE</div>
+                            <div class="notif-content">
+                                <div class="notif-info">
+                                    <div><span>Destinatario:</span> CAJA AREQUIPA ******</div>
+                                    <div><span>Fecha de envío:</span> 12/08/2026 09:50</div>
+                                </div>
+                                <div class="notif-info-right">
+                                    <div class="notif-forma"><span>Forma de entrega:</span> CASILLA ELECTRÓNICA</div>
+                                    <div class="notif-actions">
+                                        <button
+                                            onclick="abrirDetalles('NOTIFICACIÓN CÉDULA 32685-2026 - DEMANDANTE', 'CAJA AREQUIPA ******', 'RESOLUCION TRES', '26/07/2026', '12/08/2026', '17', '1', '12/08/2026')"
+                                            class="btn-notif-details">DETALLES <i class="fas fa-search"></i></button>
+                                        <button onclick="abrirPDF('4.2. CEDULA DE NOTIFICACION - CA - copia.pdf')"
+                                            class="btn-notif-pdf">VER CÉDULA <i class="fas fa-file-pdf"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="notif-card">
+                            <div class="notif-header">NOTIFICACIÓN CÉDULA 32689-2026 - DEMANDADO</div>
+                            <div class="notif-content">
+                                <div class="notif-info">
+                                    <div><span>Destinatario:</span> KHATHERINE ******</div>
+                                    <div><span>Fecha de envío:</span> 12/08/2026 09:50</div>
+                                </div>
+                                <div class="notif-info-right">
+                                    <div class="notif-forma"><span>Forma de entrega:</span> CASILLA ELECTRÓNICA</div>
+                                    <div class="notif-actions">
+                                        <button
+                                            onclick="abrirDetalles('NOTIFICACIÓN CÉDULA 32689-2026 - DEMANDADO', 'KHATHERINE ******', 'RESOLUCION TRES', '26/07/2026', '12/08/2026', '17', '1', '12/08/2026')"
+                                            class="btn-notif-details">DETALLES <i class="fas fa-search"></i></button>
+                                        <button onclick="abrirPDF('4.3. CEDULA DE NOTIFICACION - DEMANDADA.pdf')"
+                                            class="btn-notif-pdf">VER CÉDULA <i class="fas fa-file-pdf"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="seguimiento-footer">
+                            <div class="usuario-responsable">Usuario Responsable: <span class="text-blue">GUIDO
+                                    ******</span></div>
+                            <button onclick="abrirPDF('4. RESOLUCION 3.pdf')" class="btn-pdf-rojo">
+                                <i class="fas fa-file-pdf"></i> VER RES. N° 03
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="text-center mb-8">
+                <button onclick="volverAResultados()" class="btn-secondary">Volver a Resultados</button>
+            </div>
+        </main>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="footer-main">
+        <p>Av. Paseo de la República S/N Palacio de Justicia, Cercado, Lima - Perú</p>
+        <p>Copyright © 2026 Todos los derechos reservados</p>
+        <p>Recomendado para Chrome, Mozilla Firefox, IExplorer 9 o versiones superiores</p>
+    </footer>
+
+    <!-- MODAL PARA VISOR DE PDF -->
+    <div id="pdf-modal" class="pdf-modal-overlay hidden">
+        <div class="pdf-modal-content">
+            <div class="pdf-modal-header">
+                <h3 id="pdf-modal-title">Documento</h3>
+                <button onclick="cerrarPDF()" class="btn-close-modal"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="pdf-modal-body">
+                <iframe id="pdf-iframe" src="" style="width:100%; height:100%; border:none;"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE RENIEC -->
+    <div id="reniec-modal" class="pdf-modal-overlay hidden">
+        <div class="reniec-card">
+            <div class="reniec-header">
+                <div class="reniec-logo-text">RENIEC</div>
+                <button onclick="cerrarReniec()" class="btn-close-modal text-gray-400"><i
+                        class="fas fa-times"></i></button>
+            </div>
+            <div class="reniec-body">
+                <div class="reniec-title"><i class="fas fa-check-circle text-green"></i> IDENTIDAD VERIFICADA</div>
+                <div class="reniec-content-box">
+                    <div class="reniec-photo">
+                        <img id="reniec-img" src="" alt="Foto">
+                    </div>
+                    <div class="reniec-data">
+                        <div id="reniec-dni" class="reniec-row"><strong>DNI:</strong> ******</div>
+                        <div id="reniec-nombres" class="reniec-row"><strong>Nombres:</strong> FRANC ******</div>
+                        <div id="reniec-apellidos" class="reniec-row"><strong>Apellidos:</strong> ****** ******</div>
+                        <div id="reniec-rol" class="reniec-row"><strong>Rol Procesal:</strong> DEMANDADO</div>
+                        <div class="reniec-match">COINCIDENCIA BIOMÉTRICA EXACTA</div>
+                    </div>
+                </div>
+                <button onclick="cerrarReniec()" class="btn-reniec-cerrar">Cerrar Consulta</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE DETALLES DE NOTIFICACIÓN -->
+    <div id="detalles-modal" class="pdf-modal-overlay hidden">
+        <div class="detalles-card">
+            <div class="detalles-header">
+                <h3 id="detalles-title">NOTIFICACIÓN CÉDULA 32685 - 2026 - DEMANDADO</h3>
+                <button onclick="cerrarDetalles()" class="btn-close-modal text-gray-400"><i
+                        class="fas fa-times"></i></button>
+            </div>
+            <div class="detalles-body">
+                <div class="detalles-row"><span>Destinatario(a):</span> <strong id="detalles-destinatario"> CAJA
+                        MUNICIPAL DE AHORRO Y CREDITO DE AREQUIPA S.A. - CAJA AREQUIPA </strong></div>
+                <div class="detalles-row"><span>Anexos:</span> <strong id="detalles-anexos">RESOLUCION TRES</strong>
+                </div>
+
+                <div class="detalles-group">
+                    <div class="group-header">Días en Juzgado</div>
+                    <div class="group-row"><span>Fecha de Resolución:</span> <span
+                            id="detalles-fecha-res">12/08/2026</span></div>
+                    <div class="group-row"><span>Notificación impresa el:</span> <span></span></div>
+                    <div class="group-row"><span>Enviada a la Central de Notificación o Casilla Electrónica:</span>
+                        <span id="detalles-fecha-env">12/08/2026 <span class="text-red">días*(3)</span></span>
+                    </div>
+                    <div class="group-row"><span>Recepcionada en la central de Notificación el:</span> <span></span>
+                    </div>
+                </div>
+
+                <div class="detalles-group">
+                    <div class="group-header">Días en central de notificación</div>
+                    <div class="group-row"><span>Notificación al destinatario el:</span> <span
+                            id="detalles-fecha-notif">12/08/2026 <span class="text-red">días*(1)</span></span></div>
+                    <div class="group-row"><span>Cargo devuelto al juzgado el:</span> <span><span
+                                class="text-red">días*(0)</span></span></div>
+                </div>
+
+                <div class="detalles-forma">Forma de entrega:</div>
+                <div class="detalles-footer">
+                    <span class="text-red text-xs">* Días calendario desde Resolución de Fecha</span>
+                    <button onclick="cerrarDetalles()" class="btn-detalles-cerrar">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Widget Simulador Académico -->
+    <div class="widget-academico">
+        <i class="fas fa-info-circle text-yellow"></i>
+        <div>
+            <div class="font-bold text-yellow mb-1">Simulador Académico</div>
+            <p>Este sistema es un simulador con fines puramente académicos. Los nombres han sido anonimizados. No es la
+                web oficial del Poder Judicial.</p>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+
+</html>
